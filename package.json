@@ -1,0 +1,22 @@
+{
+  "name": "trendy-app",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "lint": "eslint --max-warnings 0 . && stylelint --fix **/*.css && prettier --write .",
+    "check-types": "npx --package typescript tsc --project jsconfig.json",
+    "serve": "npx serve -p 4444"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@html-eslint/eslint-plugin": "^0.23.1",
+    "@html-eslint/parser": "^0.23.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.2.4",
+    "stylelint": "^16.2.1",
+    "stylelint-config-standard": "^36.0.0"
+  }
+}

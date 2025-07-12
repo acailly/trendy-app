@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "lib": ["es2020", "DOM"],
+    "checkJs": true,
+    "noEmit": true,
+    "strict": true,
+  },
+}

@@ -1,0 +1,1225 @@
+
+/* @globals/0-settings.css */
+
+@layer 
+  reset,         /* Reset browser CSS */
+  settings,      /* Mathematical basis: colors, typographic scales, resets that ground everything. */
+  structure,     /* The site’s skeleton — body, header, main, footer framing the big picture. */
+  contexts,      /* The vibes — .ui, .content shaping interactive or readable spaces. */
+  components,    /* The building blocks — buttons, forms, bento grids you slot into place. */
+  effects,       /* Transforms, gradients, transitions, that can be slapped to any element */
+  adjustments,   /* Area-specific component adjustments */
+  screens,       /* Handling of different screen widths with @media queries */
+  overrides      /* !important rules that override everything */;
+
+@layer settings {
+  /* resets */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  figure {
+    margin: 0;
+  }
+
+  /* UI defaults */
+  :root {
+    accent-color: var(--main-500);
+  }
+
+  ::placeholder {
+    color: var(--base-400);
+  }
+
+  :focus-visible {
+    outline: 0.5px solid var(--base-500);
+    transition: outline-width 0.1s;
+    outline-offset: 1.5px;
+  }
+
+  body {
+    font-family: system-ui;
+    font-size: 15px;
+    margin: 0;
+  }
+}
+
+/* ========================================================================================= */
+
+/* @globals/colors.css */
+@layer settings {
+  :root {
+    /* slate gray */
+    --base-50: oklch(98.4% 0.003 247.858deg);
+    --base-100: oklch(96.8% 0.007 247.896deg);
+    --base-200: oklch(92.9% 0.013 255.508deg);
+    --base-300: oklch(86.9% 0.022 252.894deg);
+    --base-400: oklch(70.4% 0.04 256.788deg);
+    --base-500: oklch(55.4% 0.046 257.417deg);
+    --base-600: oklch(44.6% 0.043 257.281deg);
+    --base-700: oklch(37.2% 0.044 257.287deg);
+    --base-800: oklch(27.9% 0.041 260.031deg);
+    --base-900: oklch(20.8% 0.042 265.755deg);
+    --base-950: oklch(12.9% 0.042 264.695deg);
+
+    /* main color */
+    --main-500: #3b82f6;
+    --main-600: #2563eb;
+
+    /* alphas */
+    --alpha-50: #00000006;
+    --alpha-100: #0000000d;
+    --alpha-200: #0000001a;
+    --alpha-300: #0003;
+  }
+}
+
+/* ========================================================================================= */
+
+/* @globals/effects.css */
+
+@layer effects {
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 0.5;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .pulsating {
+    opacity: 0.1;
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    pointer-events: none;
+  }
+
+  .pulsating:nth-child(2) {
+    animation-delay: 0.25s;
+  }
+
+  .pulsating:nth-child(3) {
+    animation-delay: 0.5s;
+  }
+
+  main:not(.hmr) .appears {
+    /* TODO ACY extraire cet outil quelque part */
+
+    /* le souci c'est que starting style n'est pas bien supporté, est ce que les negative delay seraient une alternative ou pas ?
+    https://css-irl.info/quick-tip-negative-animation-delay/ */
+    
+    opacity: 1;
+    transition: opacity 0.75s;
+    transition-delay: calc(0.015s * var(--delay));
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* @globals/overrides.css */
+
+@layer overrides {
+  [hidden] {
+    display: none;
+  }
+
+  /* Tailwind nano */
+  .mr {
+    margin-right: 0.25em;
+  }
+}
+
+/* ========================================================================================= */
+
+/* @contexts/interfaces.css */
+
+/*
+  Typography and spacing for interactive contexts, such as
+  single-page apps (SPAs), headers, footers, forms, ann dynamic islands
+
+  - Small font-size is better for dense, information-rich UIs.
+    Thus 14px (--ui-font) default size with 1.25 line height
+
+  - Relies on `em` rather than `rem` to ensure spacing scales proportionally
+    with the --ui-font size set for the root element
+
+  - Uses a "boring," linear grid (e.g., `.25em` steps) over an exponential scale
+    (like a perfect fifth). This makes predictable, uniform spacing.
+
+  - Uses fixed values like `.5em`, `1em`, and `1.5em` (sometimes `.875em` or `1.125em`)
+    for whitespace and font sizes instead `calc(var(--base-unit) * 2)`
+    This avoids unnecessary complexity.
+*/
+
+@layer contexts {
+  :root {
+    --ui-font: 14px;
+    --smaller: 95%;
+    --small: 90%;
+  }
+
+  .ui {
+    font-size: var(--ui-font);
+    line-height: 1.25;
+    color: var(--base-700);
+
+    p {
+      margin: 0.25em 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 1.5em;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+    }
+
+    h2 {
+      font-size: 1em;
+      font-weight: 550;
+    }
+
+    h3 {
+      font-size: 1em;
+      font-weight: 510;
+    }
+
+    h4 {
+      font-size: 1em;
+      font-weight: 400;
+    }
+
+    a {
+      text-decoration: none;
+      font-weight: 470;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .action {
+      color: var(--base-400);
+      cursor: pointer;
+
+      &:hover {
+        border-bottom: 1px solid var(--base-300);
+      }
+    }
+
+    strong {
+      font-weight: 550;
+    }
+
+    small,
+    time {
+      font-size: 0.875em;
+      color: var(--base-00);
+    }
+
+    header {
+      button,
+      [role='button'] {
+        padding: 0.5em 1em;
+      }
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* @components/button.css */
+
+@layer components {
+  button,
+  [role='button'] {
+    /* layout */
+    justify-content: space-around;
+    display: inline-flex;
+    align-items: center;
+    font-family: inherit;
+    font-size: inherit;
+
+    .icon {
+      width: 1.2em;
+    }
+
+    /* dimensions */
+    padding: 0.75em 1em;
+
+    /* styling */
+    box-shadow: 1px 1px 1px var(--alpha-200);
+    border: 1px solid var(--base-300);
+    border-radius: 0.25em;
+    background-color: white;
+    text-decoration: none;
+    transition: 0.2s;
+    color: var(--base-600);
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--base-400);
+      color: var(--base-900);
+    }
+
+    &:active {
+      box-shadow: 0 0 2px var(--alpha-200) inset;
+      border-color: var(--base-300);
+    }
+
+    &.primary {
+      border-color: var(--main-500);
+      background-color: var(--main-500);
+      color: white;
+
+      &:hover {
+        background-color: var(--main-600);
+        color: white;
+      }
+    }
+
+    &.cta {
+      background-color: var(--base-800);
+      color: white;
+
+      &:hover {
+        background-color: var(--base-950);
+        border-color: var(--base-700);
+        color: white;
+      }
+    }
+
+    &:disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* @components/card.css */
+@layer components {
+  .card {
+    border-color: var(--alpha-100);
+    background-color: white;
+    border-radius: 0.5em;
+    padding: 1em 1.5em;
+  }
+}
+
+/* ========================================================================================= */
+
+/* @components/dialog.css */
+
+@layer components {
+  dialog {
+    padding: 1em 1.5em;
+    border-radius: 0.5em;
+    box-shadow: 0 0 2em var(--alpha-300);
+    border: 0;
+
+    header {
+      justify-content: space-between;
+      border-bottom: var(--border);
+      padding-block: 0.5em;
+      align-items: center;
+      min-width: 20em;
+      display: flex;
+    }
+
+    &::backdrop {
+      background: rgb(190 190 190 / 50%);
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* @components/form.css */
+
+@layer components {
+  input,
+  textarea {
+    border: 1px solid var(--base-300);
+    font-family: inherit;
+    border-radius: 0.25em;
+    padding: 0.75em 1em;
+    color: inherit;
+    font-size: 1em;
+    width: 100%;
+  }
+
+  form label {
+    margin-block: 1em;
+    display: block;
+
+    > :first-child {
+      font-size: 1em;
+      font-weight: 550;
+      margin-block: 0.5em;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* @components/icon.css */
+
+@layer components {
+  .icon {
+    width: var(--size, 1.25em);
+    height: var(--size, 1.25em);
+    display: inline-block;
+    vertical-align: middle;
+    stroke-width: 1.5;
+    stroke: currentcolor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+  }
+}
+
+/* ========================================================================================= */
+
+/* @components/media-object.css */
+
+/*
+  "The media object saves hundreds of lines of code"
+
+  https://www.stubbornella.org/2010/06/25/the-media-object-saves-hundreds-of-lines-of-code/
+*/
+@layer components {
+  .media {
+    align-items: var(--align, center);
+    gap: var(--gap, 0.75em);
+    display: flex;
+
+    img {
+      border-radius: 9em;
+    }
+
+    p {
+      color: var(--base-400);
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* @components/pills.css */
+
+@layer components {
+  .pill {
+    border: var(--border);
+    color: var(--base-500);
+    text-transform: capitalize;
+    display: inline-flex;
+    font-size: 0.875em;
+    padding: 0.25em;
+    padding-right: 0.75em;
+    border-radius: 1em;
+    align-items: center;
+    gap: 0.25em;
+
+    .icon {
+      color: var(--main-500);
+    }
+
+    &.plain {
+      border: unset;
+
+      .icon {
+        color: var(--base-400);
+      }
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/button.css */
+
+@layer adjustments {
+  button.plain {
+    background-color: var(--alpha-50);
+    color: var(--base-500);
+    padding: 0.25em 0.75em;
+    font-size: 0.875em;
+    gap: 0.5em;
+    border: 0;
+
+    .icon {
+      width: 1em;
+    }
+
+    &:hover {
+      background-color: var(--base-100);
+    }
+
+    &:active {
+      box-shadow: unset;
+    }
+
+    &[aria-pressed] {
+      box-shadow: 0 0 0 1px var(--base-300);
+      background-color: var(--base-100);
+    }
+  }
+
+  button.ghost {
+    background-color: unset;
+    box-shadow: unset;
+    padding: 0.25em;
+    border: 0;
+
+    &:hover {
+      background-color: var(--alpha-50);
+    }
+
+    &[aria-pressed] {
+      background-color: var(--base-200);
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/chat.css */
+
+@layer components {
+  .emoji {
+    font-size: 3em;
+    line-height: 0.75;
+  }
+
+  .post {
+    background-color: var(--base-200);
+    text-wrap: balance;
+    padding: 0.5em 1em;
+    border-radius: 1em;
+    max-width: 66%;
+
+    p {
+      color: var(--base-800);
+      line-height: 1.33;
+    }
+  }
+
+  .reply {
+    text-align: right;
+
+    .post {
+      background-color: var(--main-500);
+      margin-left: auto;
+      text-align: left;
+
+      p {
+        color: white;
+      }
+    }
+  }
+
+  .thread {
+    time {
+      display: inline-block;
+      margin: 0.25em 0.5em;
+      font-size: 1em;
+    }
+  }
+
+  .chat-form {
+    display: flex;
+    position: relative;
+    margin-bottom: 0.75em;
+
+    textarea {
+      resize: none;
+      field-sizing: content;
+      min-height: 3.85em;
+    }
+
+    /* TODO: make re-usable CTA button */
+    button {
+      border-color: transparent;
+      background-color: var(--main-500);
+      pointer-events: unset;
+      position: absolute;
+      padding: 0.25em;
+      color: white;
+      right: 1em;
+      bottom: 1em;
+
+      &:hover {
+        color: white;
+        box-shadow: 0 0 0 1px var(--main-500);
+      }
+
+      :placeholder-shown + & {
+        background-color: var(--base-200);
+        color: var(--base-400);
+        pointer-events: none;
+      }
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/deflist.css */
+
+@layer components {
+  dl {
+    display: grid;
+    grid-template-columns: 10em 1fr;
+    margin-block: 1em;
+
+    > * {
+      margin: 0.25em 0;
+      line-height: 1.4;
+    }
+
+    dt {
+      font-weight: 500;
+    }
+
+    dd {
+      color: var(--base-600);
+    }
+
+    &.full-size dd {
+      text-align: right;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/grid-view.css */
+
+@layer components {
+  .grid-view {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: grid;
+    gap: 1em;
+  }
+
+  .grid-view .list-item {
+    box-shadow: 0 0 2em var(--alpha-100);
+    flex-direction: column;
+    border: var(--border);
+    border-radius: 0.5em;
+    height: 100%;
+    padding: 1.5em;
+    display: flex;
+    gap: 0.75em;
+
+    blockquote {
+      border-left: 1px solid var(--base-300);
+      padding-left: 1em;
+
+      --line-clamp: 1;
+    }
+
+    aside {
+      &,
+      :first-child {
+        align-items: center;
+        display: flex;
+        gap: 0.5em;
+      }
+
+      :last-child {
+        margin-left: auto;
+      }
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/icons.css */
+
+@layer adjustments {
+  .plan-free svg {
+    color: var(--base-300);
+  }
+
+  .plan-pro svg {
+    color: var(--blue-500);
+  }
+
+  .plan-enterprise svg {
+    color: var(--green-500);
+  }
+
+  .size-s svg {
+    color: var(--base-300);
+  }
+
+  .size-m svg {
+    color: var(--base-400);
+  }
+
+  .size-l svg {
+    color: var(--base-700);
+  }
+
+  .size-xl svg {
+    color: var(--base-950);
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/list-item.css */
+
+@layer components {
+  .list-item {
+    font-size: var(--smaller);
+    border-radius: 0.25em;
+    margin-inline: 1px;
+    color: unset;
+
+    small {
+      text-transform: capitalize;
+    }
+
+    blockquote {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      -webkit-line-clamp: var(--line-clamp, 2);
+      color: var(--base-500);
+      line-height: 1.5;
+      font-weight: 400;
+      max-width: 40em;
+      margin: 0;
+    }
+
+    &:hover {
+      box-shadow: 0 0 0 1px var(--base-300);
+    }
+
+    &[aria-selected] {
+      box-shadow: 0 0 0 2px var(--main-500);
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/login.css */
+
+@layer adjustments {
+  .login {
+    max-width: 25em;
+    margin: 10% auto;
+    padding: 1.5em 2em;
+
+    header,
+    footer {
+      margin-block: 1.5em;
+    }
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/media-thumbs.css */
+
+@layer components {
+  .media-thumbs {
+    display: flex;
+    gap: 0.75em;
+    flex-wrap: wrap;
+    margin-block: 1em;
+
+    li {
+      width: calc(50% - 0.375em);
+    }
+  }
+
+  .media-overlay {
+    aside {
+      text-align: center;
+    }
+
+    ul {
+      display: inline-flex;
+    }
+
+    li {
+      max-width: 10em;
+    }
+
+    img {
+      border-radius: 0.25em;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/nav-panel.css */
+
+@layer components {
+  .nav-panel {
+    header {
+      display: flex;
+      justify-content: space-between;
+
+      button {
+        margin-right: -0.5em;
+      }
+    }
+
+    nav,
+    details {
+      margin: 1em 0 1.5em;
+    }
+
+    nav a {
+      color: var(--base-500);
+      border: 1px solid transparent;
+      border-radius: 0.25em;
+      align-items: center;
+      padding: 0.5em 0.75em;
+      margin-bottom: 1px;
+      display: flex;
+      gap: 0.5em;
+
+      &:hover {
+        background-color: var(--alpha-50);
+      }
+
+      &[aria-current] {
+        background-color: var(--base-200);
+        pointer-events: none;
+        color: var(--base-900);
+
+        .icon {
+          color: var(--main-500);
+          stroke-width: 2.1;
+        }
+      }
+    }
+
+    summary {
+      text-transform: uppercase;
+      border-radius: 0.25em;
+      color: var(--base-500);
+      font-size: 0.75em;
+      letter-spacing: 0.75;
+      font-weight: 500;
+      padding: 0.5em 0.75em;
+      margin-bottom: -0.75em;
+      cursor: pointer;
+    }
+
+    details nav {
+      border-left: 1px solid var(--base-300);
+      margin-left: 0.75em;
+
+      /* stylelint-disable-next-line no-descending-specificity */
+      a {
+        font-weight: 400;
+        padding: 0.25em 0.5em;
+      }
+    }
+
+    .media {
+      margin-left: 0.5em;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/panel.css */
+
+@layer components {
+  .panel {
+    height: calc(100vh - calc(var(--body-padding) * 2));
+    border: 1px solid transparent;
+    flex-direction: column;
+    display: flex;
+  }
+
+  .panel.card {
+    padding: 0 1em;
+  }
+
+  .panel > header {
+    align-items: center;
+    padding: 0.75em 0.5em;
+    display: flex;
+  }
+
+  .panel > header:has(nav) {
+    border-bottom: 1px solid var(--alpha-100);
+    margin-bottom: 0.5em;
+  }
+
+  .panel > header small {
+    font-weight: 450;
+    margin-right: 1em;
+  }
+
+  .panel > header nav {
+    margin-left: auto;
+    align-items: center;
+    display: inline-flex;
+    gap: 0.5em;
+  }
+
+  .panel > header hr {
+    height: 1em;
+    border-color: var(--base-200);
+    border-width: 0 1px 0 0;
+    margin: 0 0.5em;
+    width: 1px;
+  }
+
+  .panel .subheader {
+    margin-bottom: 1.5em;
+  }
+
+  .panel .subheader button {
+    margin-right: 0.5em;
+  }
+
+  .panel.details-panel header {
+    margin-bottom: 1em;
+  }
+
+  .panel > section {
+    padding: 2px;
+    overflow: auto;
+    flex-grow: 1;
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/search-input.css */
+
+@layer components {
+  .search {
+    background-color: white;
+    border: var(--border);
+    border-radius: 0.25em;
+    align-items: center;
+    padding: 0 0.75em;
+    display: flex;
+    margin-bottom: 1.75em;
+
+    input {
+      padding: 0.75em 0.5em;
+      width: 5em;
+      outline: 0;
+      border: 0;
+      flex: 1;
+    }
+
+    ::-webkit-search-cancel-button {
+      opacity: 0.4;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    input + kbd {
+      margin-left: auto;
+    }
+
+    &:has(:focus) {
+      outline: 0.5px solid var(--base-500);
+      outline-offset: 1px;
+
+      kbd {
+        display: none;
+      }
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/table-view.css */
+
+@layer components {
+  .table-view {
+    container-type: size;
+  }
+
+  .table-view .list-item {
+    display: grid;
+    grid-template-columns: minmax(16em, auto) minmax(10em, 1fr) auto auto auto;
+    grid-template-areas: 'header message type meta time';
+    align-items: center;
+    padding: 0.5em 1em;
+    gap: 1em;
+
+    aside {
+      display: contents;
+
+      small {
+        grid-area: type;
+        display: none;
+      }
+
+      time {
+        grid-area: time;
+        text-align: right;
+      }
+    }
+
+    blockquote {
+      grid-area: message;
+
+      --line-clamp: 3;
+    }
+
+    @container (width < 900px) {
+      .meta {
+        display: none;
+      }
+    }
+
+    @container (width < 650px) {
+      align-items: flex-start;
+      grid-template-columns: minmax(150px, auto) 1fr;
+      grid-template-areas: 'header time' 'message message';
+      gap: 0.5em;
+
+      blockquote {
+        border-left: 2px solid var(--base-300);
+        padding-left: 1.75em;
+        margin-left: 1.125em;
+        padding-right: 0;
+      }
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@components/tooltip.css */
+
+@layer components {
+  span[role='tooltip'] {
+    position-anchor: --tip;
+    position: absolute;
+    /* stylelint-disable-next-line property-no-unknown */
+    position-area: right;
+    margin-left: 10px;
+    right: -999em;
+    opacity: 0;
+    transition:
+      opacity 0.1s 0.5s,
+      transform 0.2s 0.5s;
+    transform: scale(0.9);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+
+    /* styling */
+    box-shadow: 0 1px 3px var(--alpha-300);
+    background-color: white;
+    border-radius: 0.25em;
+    padding: 0.25em 0.5em;
+    font-size: 0.75em;
+
+    &.is-shown {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    &.on-bottom {
+      /* stylelint-disable-next-line property-no-unknown */
+      position-area: bottom;
+      position-try: bottom left;
+      right: -2em;
+      margin: 10px 0 0;
+    }
+  }
+
+  /* keyboard shortcut */
+  kbd {
+    --size: 1.25em;
+
+    width: var(--size);
+    height: var(--size);
+    line-height: var(--size);
+    text-align: center;
+    background-color: var(--alpha-100);
+    text-transform: uppercase;
+    color: var(--base-400);
+    font-weight: 550;
+    border-radius: 0.25em;
+
+    strong {
+      transform: scale(1.2);
+      display: inline-block;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@app/app.css */
+
+/* misc / shameful stuff  */
+@layer adjustments {
+  body {
+    background-color: var(--base-100);
+  }
+
+  :is(h1, h2, h3):has(img, svg) {
+    align-items: center;
+    display: flex;
+    gap: 0.25em;
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@app/screens.css */
+
+@layer screens {
+  @media (width <= 1200) {
+    .details-panel {
+      box-shadow: 0 0 0 99em rgba(0 0 0 0.4);
+      position: absolute;
+      right: 1em;
+    }
+  }
+
+  .mobile {
+    display: none;
+  }
+
+  @media (width <= 900) {
+    .mobile {
+      display: unset;
+    }
+
+    :root {
+      --body-padding: 0px;
+    }
+
+    .panel {
+      border-radius: 0;
+    }
+
+    .nav-panel {
+      border-right: var(--border);
+      background-color: var(--base-100);
+      width: min(20em, 100vw);
+      position: absolute;
+      padding: 0 1em 1em 0.5em;
+      transition: left 0.25s;
+      left: -30em;
+      z-index: 1;
+
+      &[aria-visible] {
+        box-shadow: 0 0 0 99em rgba(0 0 0 0.4);
+        left: 0;
+      }
+    }
+
+    .details-panel {
+      right: 0;
+    }
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@app/settings.css */
+
+@layer settings {
+  :root {
+    --border: 1px solid var(--base-200);
+    --body-padding: 1em;
+
+    /* special colors */
+    --blue-100: oklch(95% 0.1 250deg);
+    --blue-500: oklch(70% 0.25 250deg);
+    --green-100: oklch(95% 0.1 150deg);
+    --green-500: oklch(70% 0.25 150deg);
+
+    /* maybe later
+
+    --violet-100: oklch(95% 0.1 290);
+    --violet-500: oklch(70% 0.25 290);
+
+    --cyan-100: oklch(95% 0.1 200);
+    --cyan-500: oklch(70% 0.25 200);
+
+    --pink-100: oklch(95% 0.1 350);
+    --pink-500: oklch(70% 0.25 350);
+    */
+  }
+}
+
+/* ========================================================================================= */
+
+/* app/@app/structure.css */
+
+@layer structure {
+  body {
+    overflow: hidden;
+    padding: var(--body-padding);
+  }
+
+  .app {
+    gap: 1em;
+    display: flex;
+
+    /* wide-screen panel dimensions */
+    .nav-panel {
+      min-width: 16em;
+    }
+
+    .content-panel {
+      flex-grow: 1;
+    }
+
+    .details-panel {
+      width: 28em;
+    }
+  }
+}
+
+/* ========================================================================================= */

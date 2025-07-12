@@ -1,0 +1,41 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended", "prettier"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "ignorePatterns": ["external-libs/"],
+  "plugins": ["@html-eslint"],
+  "rules": {
+    "no-var": "error"
+  },
+  "overrides": [
+    {
+      "files": ["types-check.js", "lint-check.js"],
+      "env": {
+        "node": true
+      },
+      "parserOptions": {
+        "sourceType": "commonjs"
+      }
+    },
+    {
+      "files": ["*.mjs"]
+    },
+    {
+      "files": ["*.html"],
+      "parser": "@html-eslint/parser",
+      "extends": ["plugin:@html-eslint/recommended"],
+      "rules": {
+        "@html-eslint/indent": ["error", 2],
+        "@html-eslint/require-closing-tags": "off",
+        "@html-eslint/no-extra-spacing-attrs": "off",
+        "@html-eslint/element-newline": "off"
+      }
+    }
+  ]
+}

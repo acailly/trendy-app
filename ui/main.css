@@ -1,0 +1,1121 @@
+
+/* TODO ACY Ici il utilise 3 utilisations : fill/border/text avec 3 états muted/vivid/accent + 1 outline
+  https://gomakethings.com/how-to-create-light-and-dark-color-modes-with-css/
+  et https://gomakethings.com/creating-a-semantic-color-palette/
+*/
+
+/* TODO ACY essayer d'extraire les design tokens utilisés et voir si on peut en extraire un design system simple */
+
+/* TODO ACY essayer de rendre le tout un peu plus explicite en se basant moins sur les éléments HTML, 
+  par exemple : .search input + kbd => .search .search-input + .search-kbd */
+
+/* TODO ACY démêler les panels */
+
+/* ============
+ * =  TOKENS  =
+ * ============ */
+
+:root {
+  /* slate gray */
+  --base-50: oklch(98.4% 0.003 247.858deg);
+  --base-100: oklch(96.8% 0.007 247.896deg);
+  --base-200: oklch(92.9% 0.013 255.508deg);
+  --base-300: oklch(86.9% 0.022 252.894deg);
+  --base-400: oklch(70.4% 0.04 256.788deg);
+  --base-500: oklch(55.4% 0.046 257.417deg);
+  --base-600: oklch(44.6% 0.043 257.281deg);
+  --base-700: oklch(37.2% 0.044 257.287deg);
+  --base-800: oklch(27.9% 0.041 260.031deg);
+  --base-900: oklch(20.8% 0.042 265.755deg);
+  --base-950: oklch(12.9% 0.042 264.695deg);
+
+  /* main color */
+  --main-500: #3b82f6;
+  --main-600: #2563eb;
+
+  /* alphas */
+  --alpha-50: #00000006;
+  --alpha-100: #0000000d;
+  --alpha-200: #0000001a;
+  --alpha-300: #0003;
+
+  /* special colors */
+  --blue-100: oklch(95% 0.1 250deg);
+  --blue-500: oklch(70% 0.25 250deg);
+  --green-100: oklch(95% 0.1 150deg);
+  --green-500: oklch(70% 0.25 150deg);
+
+  accent-color: var(--main-500);
+
+  --border: 1px solid var(--base-200);
+  --body-padding: 1em;
+
+  /* maybe later
+
+  --violet-100: oklch(95% 0.1 290);
+  --violet-500: oklch(70% 0.25 290);
+
+  --cyan-100: oklch(95% 0.1 200);
+  --cyan-500: oklch(70% 0.25 200);
+
+  --pink-100: oklch(95% 0.1 350);
+  --pink-500: oklch(70% 0.25 350);
+  */
+
+  /*
+    Typography and spacing for interactive contexts, such as
+    single-page apps (SPAs), headers, footers, forms, ann dynamic islands
+
+    - Small font-size is better for dense, information-rich UIs.
+      Thus 14px (--ui-font) default size with 1.25 line height
+
+    - Relies on `em` rather than `rem` to ensure spacing scales proportionally
+      with the --ui-font size set for the root element
+
+    - Uses a "boring," linear grid (e.g., `.25em` steps) over an exponential scale
+      (like a perfect fifth). This makes predictable, uniform spacing.
+
+    - Uses fixed values like `.5em`, `1em`, and `1.5em` (sometimes `.875em` or `1.125em`)
+      for whitespace and font sizes instead `calc(var(--base-unit) * 2)`
+      This avoids unnecessary complexity.
+  */
+  --ui-font: 14px;
+  --smaller: 95%;
+  --small: 90%;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --body-padding: 0px;
+  }
+}
+
+/* ========================================================================================= */
+
+[hidden] {
+  display: none;
+}
+
+body {
+  overflow: hidden;
+  padding: var(--body-padding);
+  background-color: var(--base-100);
+  font-size: var(--ui-font);
+  line-height: 1.25;
+  color: var(--base-700);
+  font-family: system-ui;
+  margin: 0;
+}
+
+main {
+  gap: 1em;
+  display: flex;
+}
+
+@media (max-width: 900px) {
+  main {
+    gap: 0;
+  }
+}
+
+main .nav-panel {
+  min-width: 16em;
+}
+
+main .content-panel {
+  flex-grow: 1;
+  padding: 0 1em;
+}
+
+main .details-panel {
+  width: 28em;
+  padding: 0 1em;
+}
+
+p {
+  margin: 0.25em 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+}
+
+:is(h1, h2, h3):has(img, svg) {
+  align-items: center;
+  display: flex;
+  gap: 0.25em;
+}
+
+h1 {
+  font-size: 1.5em;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+h2 {
+  font-size: 1em;
+  font-weight: 550;
+}
+
+h3 {
+  font-size: 1em;
+  font-weight: 510;
+}
+
+h4 {
+  font-size: 1em;
+  font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  font-weight: 470;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+.action {
+  color: var(--base-400);
+  cursor: pointer;
+
+  &:hover {
+    border-bottom: 1px solid var(--base-300);
+  }
+}
+
+strong {
+  font-weight: 550;
+}
+
+small,
+time {
+  font-size: 0.875em;
+  color: var(--base-00);
+}
+
+header button,
+header [role='button'] {
+  padding: 0.5em 1em;
+  margin-right: 0.25em;
+}
+
+
+img {
+  max-width: 100%;
+}
+
+figure {
+  margin: 0;
+}
+
+::placeholder {
+  color: var(--base-400);
+}
+
+:focus-visible {
+  outline: 0.5px solid var(--base-500);
+  transition: outline-width 0.1s;
+  outline-offset: 1.5px;
+}
+
+/* ======================
+ * =  PULSATING EFFECT  =
+ * ====================== */
+ 
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.pulsating {
+  opacity: 0.1;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  pointer-events: none;
+}
+
+.pulsating:nth-child(2) {
+  animation-delay: 0.25s;
+}
+
+.pulsating:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+/* ======================
+ * =  APPEARS EFFECT  =
+ * ====================== */
+
+main:not(.hmr) .appears {
+  /* le souci c'est que starting style n'est pas bien supporté, est ce que les negative delay seraient une alternative ou pas ?
+  https://css-irl.info/quick-tip-negative-animation-delay/ */
+  
+  opacity: 1;
+  transition: opacity 0.75s;
+  transition-delay: calc(0.015s * var(--delay));
+
+  @starting-style {
+    opacity: 0;
+  }
+}
+
+/* ==========
+ * =  ICON  =
+ * ========== */
+
+.icon {
+  width: var(--size, 1.25em);
+  height: var(--size, 1.25em);
+  display: inline-block;
+  vertical-align: middle;
+  stroke-width: 1.5;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+*[aria-current] .icon.icon-highlight-when-current {
+  color: var(--main-500);
+  stroke-width: 2.1;
+}
+
+/* ============
+ * =  BUTTON  =
+ * ============ */
+
+button, [role='button'] {
+  justify-content: space-around;
+  display: inline-flex;
+  align-items: center;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0.75em 1em;
+  box-shadow: 1px 1px 1px var(--alpha-200);
+  border: 1px solid var(--base-300);
+  border-radius: 0.25em;
+  background-color: white;
+  text-decoration: none;
+  transition: 0.2s;
+  color: var(--base-600);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+
+button .button-icon, [role='button'] .button-icon {
+  width: 1.2em;
+}
+
+button:hover, [role='button']:hover {
+  border-color: var(--base-400);
+  color: var(--base-900);
+}
+
+button:active, [role='button']:active {
+  box-shadow: 0 0 2px var(--alpha-200) inset;
+  border-color: var(--base-300);
+}
+
+button.button-primary, [role='button'].button-primary {
+  border-color: var(--main-500);
+  background-color: var(--main-500);
+  color: white;
+}
+
+button.button-primary:hover, [role='button'].button-primary:hover {
+  background-color: var(--main-600);
+  color: white;
+}
+
+button.button-cta, [role='button'].button-cta {
+  background-color: var(--base-800);
+  color: white;
+}
+
+button.button-cta:hover, [role='button'].button-cta:hover {
+  background-color: var(--base-950);
+  border-color: var(--base-700);
+  color: white;
+}
+
+button:disabled, [role='button']:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+button.button-plain, [role='button'].button-plain {
+  background-color: var(--alpha-50);
+  color: var(--base-500);
+  padding: 0.25em 0.75em;
+  font-size: 0.875em;
+  gap: 0.5em;
+  border: 0;
+}
+
+button.button-plain .button-icon, [role='button'].button-plain .button-icon {
+  width: 1em;
+}
+
+button.button-plain:hover, [role='button'].button-plain:hover {
+  background-color: var(--base-100);
+}
+
+button.button-plain:active, [role='button'].button-plain:active {
+  box-shadow: unset;
+}
+
+button.button-plain[aria-pressed], [role='button'].button-plain[aria-pressed] {
+  box-shadow: 0 0 0 1px var(--base-300);
+  background-color: var(--base-100);
+}
+
+button.button-ghost, [role='button'].button-ghost {
+  background-color: unset;
+  box-shadow: unset;
+  padding: 0.25em;
+  border: 0;
+}
+
+button.button-ghost:hover, [role='button'].button-ghost:hover {
+  background-color: var(--alpha-50);
+}
+
+button.button-ghost[aria-pressed], [role='button'].button-ghost[aria-pressed] {
+  background-color: var(--base-200);
+  pointer-events: none;
+  cursor: default;
+}
+
+:placeholder-shown + button {
+  border-color: transparent;
+  background-color: var(--base-200);
+  color: var(--base-400);
+  pointer-events: none;
+}
+
+/* ============
+ * =  DIALOG  =
+ * ============ */
+
+dialog {
+  padding: 1em 1.5em;
+  border-radius: 0.5em;
+  box-shadow: 0 0 2em var(--alpha-300);
+  border: 0;
+}
+
+dialog header {
+  justify-content: space-between;
+  border-bottom: var(--border);
+  padding-block: 0.5em;
+  align-items: center;
+  min-width: 20em;
+  display: flex;
+}
+
+dialog::backdrop {
+  background: rgb(190 190 190 / 50%);
+}
+
+/* ============
+ * =  PILL  =
+ * ============ */
+
+.pill {
+  border: var(--border);
+  color: var(--base-500);
+  text-transform: capitalize;
+  display: inline-flex;
+  font-size: 0.875em;
+  padding: 0.25em;
+  padding-right: 0.75em;
+  border-radius: 1em;
+  align-items: center;
+  gap: 0.25em;
+}
+
+.pill .pill-icon {
+  color: var(--main-500);
+}
+
+.pill.pill-plain {
+  border: unset;
+}
+
+.pill.pill-plain .pill-icon {
+  color: var(--base-400);
+}
+
+/* ===========
+ * =  EMOJI  =
+ * =========== */
+
+.emoji {
+  font-size: 3em;
+  line-height: 0.75;
+}
+
+/* ===============
+ * = PLAN COLORS =
+ * =============== */
+
+.plan-color.plan-free {
+  color: var(--base-300);
+}
+
+.plan-color.plan-pro {
+  color: var(--blue-500);
+}
+
+.plan-color.plan-enterprise {
+  color: var(--green-500);
+}
+
+/* =======================
+ * = COMPANY SIZE COLORS =
+ * ======================= */
+
+.size-color.size-s {
+  color: var(--base-300);
+}
+
+.size-color.size-m {
+  color: var(--base-400);
+}
+
+.size-color.size-l {
+  color: var(--base-700);
+}
+
+.size-color.size-xl {
+  color: var(--base-950);
+}
+
+/* ================
+ * = MEDIA OBJECT =
+ * ================ */
+
+/*
+  "The media object saves hundreds of lines of code"
+
+  https://www.stubbornella.org/2010/06/25/the-media-object-saves-hundreds-of-lines-of-code/
+*/
+
+.media-object {
+  align-items: var(--align, center);
+  gap: var(--gap, 0.75em);
+  display: flex;
+}
+
+.media-object .media-object-avatar {
+  border-radius: 9em;
+}
+
+.media-object .media-object-title {
+  margin: 0;
+  font-size: 1em;
+  font-weight: 550;
+}
+
+.media-object .media-object-subtitle {
+  color: var(--base-400);
+}
+
+/* =================
+ * = PROPERTY LIST =
+ * ================= */
+
+dl.property-list {
+  display: grid;
+  grid-template-columns: 10em 1fr;
+  margin-block: 1em;
+}
+
+dl.property-list > * {
+  margin: 0.25em 0;
+  line-height: 1.4;
+}
+
+dl.property-list dt {
+  font-weight: 500;
+}
+
+dl.property-list dd {
+  color: var(--base-600);
+}
+
+dl.property-list.full-size dd {
+  text-align: right;
+}
+
+/* ===========================
+ * = COLLECTION (grid/table) =
+ * =========================== */
+
+/* TODO ACY essayer de mettre plus de trucs en commun */
+
+.collection .collection-item:hover {
+  box-shadow: 0 0 0 1px var(--base-300);
+}
+
+.collection .collection-item[aria-selected] {
+  box-shadow: 0 0 0 2px var(--main-500);
+}
+
+.collection .collection-item small {
+  text-transform: capitalize;
+}
+
+.collection .collection-item {
+  font-size: var(--smaller);
+  margin-inline: 1px;
+  color: unset;
+}
+
+.collection .collection-item blockquote {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  -webkit-line-clamp: var(--line-clamp, 2);
+  color: var(--base-500);
+  line-height: 1.5;
+  font-weight: 400;
+  max-width: 40em;
+  margin: 0;
+}
+
+.collection-grid {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  display: grid;
+  gap: 1em;
+}
+
+.collection-grid .collection-item {
+  box-shadow: 0 0 2em var(--alpha-100);
+  flex-direction: column;
+  border: var(--border);
+  border-radius: 0.5em;
+  height: 100%;
+  padding: 1.5em;
+  display: flex;
+  gap: 0.75em;
+}
+
+.collection-grid .collection-item blockquote {
+  border-left: 1px solid var(--base-300);
+  padding-left: 1em;
+
+  --line-clamp: 3;
+}
+
+.collection-grid .collection-item aside, .collection-grid .collection-item aside :first-child {
+  align-items: center;
+  display: flex;
+  gap: 0.5em;
+}
+
+.collection-grid .collection-item aside :last-child {
+  margin-left: auto;
+}
+
+.collection-table {
+  container-type: size;
+}
+
+.collection-table .collection-item {
+  border-radius: 0.25em;
+  display: grid;
+  grid-template-columns: minmax(16em, auto) minmax(10em, 1fr) auto auto auto;
+  grid-template-areas: 'header message type meta time';
+  align-items: center;
+  padding: 0.5em 1em;
+  gap: 1em;
+}
+
+.collection-table .collection-item aside {
+  display: contents;
+}
+
+.collection-table .collection-item aside small {
+  grid-area: type;
+  display: none;
+}
+
+.collection-table .collection-item aside time {
+  grid-area: time;
+  text-align: right;
+}
+
+.collection-table .collection-item blockquote {
+  grid-area: message;
+
+  --line-clamp: 2;
+}
+
+@container (width < 900px) {
+  .collection-table .collection-item .meta {
+    display: none;
+  }
+}
+
+@container (width < 650px) {
+  .collection-table .collection-item {
+    align-items: flex-start;
+    grid-template-columns: minmax(150px, auto) 1fr;
+    grid-template-areas: 'header time' 'message message';
+    gap: 0.5em;
+  }
+
+  .collection-table .collection-item blockquote {
+    border-left: 2px solid var(--base-300);
+    padding-left: 1.75em;
+    margin-left: 1.125em;
+    padding-right: 0;
+  }
+}
+
+/* ====================
+ * = MEDIA THUMBNAILS =
+ * ==================== */
+
+.media-thumbs {
+  display: flex;
+  gap: 0.75em;
+  flex-wrap: wrap;
+  margin-block: 1em;
+}
+
+.media-thumbs li {
+  width: calc(50% - 0.375em);
+}
+
+/* =================
+ * = MEDIA OVERLAY =
+ * ================= */
+
+.media-overlay aside {
+  text-align: center;
+}
+
+.media-overlay ul {
+  display: inline-flex;
+}
+
+.media-overlay li {
+  max-width: 10em;
+}
+
+.media-overlay img {
+  border-radius: 0.25em;
+}
+
+/* =============
+ * = CHAT FORM =
+ * ============= */
+
+.chat-form {
+  display: flex;
+  position: relative;
+  margin-bottom: 0.75em;
+}
+
+.chat-form textarea {
+  resize: none;
+  field-sizing: content;
+  min-height: 3.85em;
+}
+
+.chat-form button {
+  pointer-events: unset;
+  position: absolute;
+  padding: 0.25em;
+  right: 1em;
+  bottom: 1em;
+}
+
+/* ===============
+ * = CHAT THREAD =
+ * =============== */
+
+.chat-thread .chat-post {
+  background-color: var(--base-200);
+  text-wrap: balance;
+  padding: 0.5em 1em;
+  border-radius: 1em;
+  max-width: 66%;
+}
+
+.chat-thread .chat-post  p {
+  color: var(--base-800);
+  line-height: 1.33;
+}
+
+.chat-thread .chat-reply {
+  text-align: right;
+}
+
+.chat-thread .chat-reply .chat-post {
+  background-color: var(--main-500);
+  margin-left: auto;
+  text-align: left;
+}
+
+.chat-thread .chat-reply .chat-post p {
+  color: white;
+}
+
+.chat-thread time {
+  display: inline-block;
+  margin: 0.25em 0.5em;
+  font-size: 1em;
+}
+
+/* ========
+ * = CARD =
+ * ======== */
+
+.card {
+  border-color: var(--alpha-100);
+  background-color: white;
+  border-radius: 0.5em;
+  padding: 1em 1.5em;
+}
+
+/* ==============
+ * = LOGIN FORM =
+ * ============== */
+
+.login {
+  max-width: 25em;
+  margin: 10% auto;
+  padding: 1.5em 2em;
+}
+
+.login header, .login footer{
+  margin-block: 1.5em;
+}
+
+.login button {
+  width: 100%;
+}
+
+/* ==========
+ * = SEARCH =
+ * ========== */
+
+.search {
+  background-color: white;
+  border: var(--border);
+  border-radius: 0.25em;
+  align-items: center;
+  padding: 0 0.75em;
+  display: flex;
+  margin-bottom: 1.75em;
+}
+
+.search input {
+  padding: 0.75em 0.5em;
+  width: 5em;
+  outline: 0;
+  border: 0;
+  flex: 1;
+}
+
+.search ::-webkit-search-cancel-button {
+  opacity: 0.4;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.search input + kbd {
+  margin-left: auto;
+}
+
+.search:has(:focus) {
+  outline: 0.5px solid var(--base-500);
+  outline-offset: 1px;
+}
+
+.search:has(:focus) kbd {
+  display: none;
+}
+
+/* =====================
+ * = KEYBOARD SHORTCUT =
+ * ===================== */
+
+ kbd {
+  --size: 1.25em;
+
+  width: var(--size);
+  height: var(--size);
+  line-height: var(--size);
+  text-align: center;
+  background-color: var(--alpha-100);
+  text-transform: uppercase;
+  color: var(--base-400);
+  font-weight: 550;
+  border-radius: 0.25em;
+}
+
+kbd strong {
+  transform: scale(1.2);
+  display: inline-block;
+}
+
+/* ==========
+ * = TOOLTIP =
+ * ========== */
+
+span[role='tooltip'] {
+  position-anchor: --tip;
+  position: absolute;
+  /* stylelint-disable-next-line property-no-unknown */
+  position-area: right;
+  margin-left: 10px;
+  right: -999em;
+  opacity: 0;
+  transition:
+    opacity 0.1s 0.5s,
+    transform 0.2s 0.5s;
+  transform: scale(0.9);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  box-shadow: 0 1px 3px var(--alpha-300);
+  background-color: white;
+  border-radius: 0.25em;
+  padding: 0.25em 0.5em;
+  font-size: 0.75em;
+}
+
+span[role='tooltip'].is-shown {
+  opacity: 1;
+  transform: scale(1);
+}
+
+span[role='tooltip'].on-bottom {
+  /* stylelint-disable-next-line property-no-unknown */
+  position-area: bottom;
+  position-try: bottom left;
+  right: -2em;
+  margin: 10px 0 0;
+}
+
+/* ==========
+ * = MOBILE =
+ * ========== */
+
+.mobile {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobile {
+    display: unset;
+  }
+}
+
+/* =========
+ * = FORMS =
+ * ========= */
+
+input,
+textarea {
+  border: 1px solid var(--base-300);
+  font-family: inherit;
+  border-radius: 0.25em;
+  padding: 0.75em 1em;
+  color: inherit;
+  font-size: 1em;
+  width: 100%;
+}
+
+form label {
+  margin-block: 1em;
+  display: block;
+}
+
+form label > :first-child {
+  font-size: 1em;
+  font-weight: 550;
+  margin-block: 0.5em;
+}
+
+/* ========================================================================================= */
+
+.nav-panel > header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-panel > header button {
+  margin-right: -0.5em;
+}
+
+.nav-panel nav,
+.nav-panel details {
+  margin: 1em 0 1.5em;
+}
+
+.nav-panel nav a {
+  color: var(--base-500);
+  border: 1px solid transparent;
+  border-radius: 0.25em;
+  align-items: center;
+  padding: 0.5em 0.75em;
+  margin-bottom: 1px;
+  display: flex;
+  gap: 0.5em;
+}
+
+.nav-panel nav a:hover {
+  background-color: var(--alpha-50);
+}
+
+.nav-panel nav a[aria-current] {
+  background-color: var(--base-200);
+  pointer-events: none;
+  color: var(--base-900);
+}
+
+.nav-panel summary {
+  text-transform: uppercase;
+  border-radius: 0.25em;
+  color: var(--base-500);
+  font-size: 0.75em;
+  letter-spacing: 0.75;
+  font-weight: 500;
+  padding: 0.5em 0.75em;
+  margin-bottom: -0.75em;
+  cursor: pointer;
+}
+
+.nav-panel details nav {
+  border-left: 1px solid var(--base-300);
+  margin-left: 0.75em;
+}
+
+.nav-panel details nav a {
+  font-weight: 400;
+  padding: 0.25em 0.5em;
+}
+
+.nav-panel .media {
+  margin-left: 0.5em;
+}
+
+@media (max-width: 900px) {
+  .nav-panel {
+    border-right: var(--border);
+    background-color: var(--base-100);
+    width: min(20em, 100vw);
+    position: absolute;
+    padding: 0 1em 1em 0.5em;
+    transition: left 0.25s;
+    left: -30em;
+    z-index: 1;
+  }
+
+  .nav-panel[aria-visible] {
+    box-shadow: 0 0 0 99em rgba(0 0 0 0.4);
+    left: 0;
+  }
+}
+
+/* ========================================================================================= */
+
+.panel {
+  height: calc(100vh - calc(var(--body-padding) * 2));
+  border: 1px solid transparent;
+  flex-direction: column;
+  display: flex;
+}
+
+
+@media (max-width: 900px) {
+  .panel {
+    border-radius: 0;
+  }
+}
+
+.panel > header {
+  align-items: center;
+  padding: 0.75em 0.5em;
+  display: flex;
+}
+
+.panel > header:has(nav) {
+  border-bottom: 1px solid var(--alpha-100);
+  margin-bottom: 0.5em;
+}
+
+.panel > header small {
+  font-weight: 450;
+  margin-right: 1em;
+}
+
+.panel > header nav {
+  margin-left: auto;
+  align-items: center;
+  display: inline-flex;
+  gap: 0.5em;
+}
+
+.panel > header hr {
+  height: 1em;
+  border-color: var(--base-200);
+  border-width: 0 1px 0 0;
+  margin: 0 0.5em;
+  width: 1px;
+}
+
+.panel .subheader {
+  margin-bottom: 1.5em;
+}
+
+.panel .subheader button {
+  margin-right: 0.5em;
+}
+
+.panel.details-panel > header {
+  margin-bottom: 1em;
+}
+
+@media (max-width: 1200px) {
+  .details-panel {
+    box-shadow: 0 0 0 99em #0006;
+    position: absolute;
+    right: 1em;
+  }
+}
+
+@media (max-width: 900px) {
+  .details-panel {
+    right: 0;
+  }
+}
+
+.panel > section {
+  padding: 2px;
+  overflow: auto;
+  flex-grow: 1;
+}
+
+/* ========================================================================================= */
