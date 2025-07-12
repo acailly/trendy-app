@@ -6,8 +6,6 @@ import MutableListenableData from './listenableData.util.mjs'
 // - demo: https://mpa.nuejs.org/app/
 // - source: https://github.com/nuejs/nue/tree/master/packages/examples/simple-mpa
 
-// TODO ACY ICI : mettre ca dans un repo à part
-
 /**
  * @template T
  * @typedef {import('./listenableData.util.mjs').ListenableData<T>} ListenableData<T>

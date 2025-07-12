@@ -14,11 +14,4 @@ function html(texts, ...vars) {
   return result
 }
 
-// TODO ACY ajouter le sanitize (regarder comment font les frameworks ???)
-// TODO ACY regarder de ce côté https://plainvanillaweb.com/pages/applications.html#entity-encoding
-
-// TODO ACY regarder proposition d'integrer ca au standard
-// https://justinfagnani.com/2025/06/26/the-time-is-right-for-a-dom-templating-api/
-// https://github.com/WICG/webcomponents/issues/1069
-
 export default html
